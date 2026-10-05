@@ -287,64 +287,77 @@
 
 	// $("#myScrollspy").scrollspy({ offset: -75 });
 
-
-
-var TxtRotate = function(el, toRotate, period) {
-  this.toRotate = toRotate;
-  this.el = el;
-  this.loopNum = 0;
-  this.period = parseInt(period, 10) || 2000;
-  this.txt = '';
-  this.tick();
-  this.isDeleting = false;
-};
-
-TxtRotate.prototype.tick = function() {
-  var i = this.loopNum % this.toRotate.length;
-  var fullTxt = this.toRotate[i];
-
-  if (this.isDeleting) {
-    this.txt = fullTxt.substring(0, this.txt.length - 1);
-  } else {
-    this.txt = fullTxt.substring(0, this.txt.length + 1);
-  }
-
-  this.el.innerHTML = '<span class="wrap">'+this.txt+'</span>';
-
-  var that = this;
-  var delta = 300 - Math.random() * 100;
-
-  if (this.isDeleting) { delta /= 2; }
-
-  if (!this.isDeleting && this.txt === fullTxt) {
-    delta = this.period;
-    this.isDeleting = true;
-  } else if (this.isDeleting && this.txt === '') {
+  var TxtRotate = function(el, toRotate, period) {
+    this.toRotate = toRotate;
+    this.el = el;
+    this.loopNum = 0;
+    this.period = parseInt(period, 10) || 1800;
+    this.txt = '';
     this.isDeleting = false;
-    this.loopNum++;
-    delta = 500;
-  }
+    this.tick();
+  };
 
-  setTimeout(function() {
-    that.tick();
-  }, delta);
-};
+  TxtRotate.prototype.tick = function() {
+    var i = this.loopNum % this.toRotate.length;
+    var fullTxt = this.toRotate[i];
+    this.txt = this.isDeleting ? fullTxt.substring(0, this.txt.length - 1) : fullTxt.substring(0, this.txt.length + 1);
+    this.el.innerHTML = '<span class="wrap">' + this.txt + '</span>';
 
-window.onload = function() {
-  var elements = document.getElementsByClassName('txt-rotate');
-  for (var i=0; i<elements.length; i++) {
-    var toRotate = elements[i].getAttribute('data-rotate');
-    var period = elements[i].getAttribute('data-period');
-    if (toRotate) {
-      new TxtRotate(elements[i], JSON.parse(toRotate), period);
+    var that = this;
+    var delta = this.isDeleting ? 42 : 76;
+    if (!this.isDeleting && this.txt === fullTxt) {
+      delta = this.period;
+      this.isDeleting = true;
+    } else if (this.isDeleting && this.txt === '') {
+      this.isDeleting = false;
+      this.loopNum++;
+      delta = 360;
+    }
+    setTimeout(function() { that.tick(); }, delta);
+  };
+
+  $('.txt-rotate').each(function() {
+    var toRotate = $(this).attr('data-rotate');
+    if (toRotate) new TxtRotate(this, JSON.parse(toRotate), $(this).attr('data-period'));
+  });
+
+  var contactStatus = new URLSearchParams(window.location.search).get('contact');
+  var $formStatus = $('.form-status');
+  var $directEmail = $('.form-direct-email');
+  if (contactStatus && $formStatus.length) {
+    var statuses = {
+      sent: ['success', 'Thanks—your message has been sent. I’ll be in touch soon.'],
+      invalid: ['error', 'Please complete the required fields with a valid email address.'],
+      error: ['error', 'Your message could not be sent right now. Please email me directly instead.']
+    };
+    if (statuses[contactStatus]) {
+      $formStatus.addClass('is-' + statuses[contactStatus][0]).text(statuses[contactStatus][1]);
+      if (contactStatus === 'error') $directEmail.addClass('is-visible');
     }
   }
-  // INJECT CSS
-  var css = document.createElement("style");
-  css.type = "text/css";
-  css.innerHTML = ".txt-rotate > .wrap { border-right: 0.08em solid #666 }";
-  document.body.appendChild(css);
-};
+
+  $('#contact-form').on('submit', function(event) {
+    if (!this.checkValidity()) return;
+
+    var hostname = window.location.hostname;
+    var isLocalPreview = hostname === 'localhost' || hostname === '127.0.0.1';
+    if (!isLocalPreview) return;
+
+    event.preventDefault();
+    var $form = $(this);
+    var recipient = $form.data('recipient');
+    var name = $form.find('[name="name"]').val();
+    var email = $form.find('[name="email"]').val();
+    var subject = $form.find('[name="subject"]').val() || 'Project inquiry';
+    var message = $form.find('[name="message"]').val();
+    var body = 'Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message;
+    var mailto = 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+
+    $formStatus.removeClass('is-error').addClass('is-success').text('Opening your email app with the message prefilled.').show();
+    $directEmail.addClass('is-visible');
+    window.location.href = mailto;
+  });
+
 
 
 })(jQuery);
@@ -411,32 +424,3 @@ hash = function(h){
     location.hash = h;
   }
 }
-
-
-$(function() {
-
-  $(".progress").each(function() {
-
-    var value = $(this).attr('data-value');
-    var left = $(this).find('.progress-left .progress-bar');
-    var right = $(this).find('.progress-right .progress-bar');
-
-    if (value > 0) {
-      if (value <= 50) {
-        right.css('transform', 'rotate(' + percentageToDegrees(value) + 'deg)')
-      } else {
-        right.css('transform', 'rotate(180deg)')
-        left.css('transform', 'rotate(' + percentageToDegrees(value - 50) + 'deg)')
-      }
-    }
-
-  })
-
-  function percentageToDegrees(percentage) {
-
-    return percentage / 100 * 360
-
-  }
-
-});
-
