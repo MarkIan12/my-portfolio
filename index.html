@@ -694,7 +694,10 @@
 						</div>
 					</div>
 					<div class="col-lg-7">
-						<form action="contact.php" method="post" class="contact-form-modern" id="contact-form" data-recipient="iandeveloper0412@gmail.com">
+						<form action="https://formsubmit.co/iandeveloper0412@gmail.com" method="post" class="contact-form-modern" id="contact-form">
+							<input type="hidden" name="_subject" value="New portfolio inquiry">
+							<input type="hidden" name="_template" value="table">
+							<input type="hidden" name="_next" id="contact-next" value="">
 							<div class="form-status" role="status" aria-live="polite"></div>
 							<div class="form-row">
 								<div class="form-group col-md-6"><label for="name">Name <span>*</span></label><input id="name" name="name" type="text" autocomplete="name" required placeholder="Jane Smith"></div>
@@ -702,7 +705,7 @@
 							</div>
 							<div class="form-group"><label for="subject">Subject</label><input id="subject" name="subject" type="text" placeholder="Project inquiry"></div>
 							<div class="form-group"><label for="message">Message <span>*</span></label><textarea id="message" name="message" rows="6" required placeholder="Tell me about your project…"></textarea></div>
-							<div class="website-field" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+							<div class="website-field" aria-hidden="true"><label for="website">Website</label><input id="website" name="_honey" type="text" tabindex="-1" autocomplete="off"></div>
 							<button type="submit" class="btn btn-primary">Send message <span aria-hidden="true">→</span></button>
 							<a class="form-direct-email" href="mailto:iandeveloper0412@gmail.com?subject=Project%20inquiry">Prefer email? Write to me directly.</a>
 						</form>

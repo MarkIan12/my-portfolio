@@ -336,27 +336,10 @@
     }
   }
 
-  $('#contact-form').on('submit', function(event) {
-    if (!this.checkValidity()) return;
-
-    var hostname = window.location.hostname;
-    var isLocalPreview = hostname === 'localhost' || hostname === '127.0.0.1';
-    if (!isLocalPreview) return;
-
-    event.preventDefault();
-    var $form = $(this);
-    var recipient = $form.data('recipient');
-    var name = $form.find('[name="name"]').val();
-    var email = $form.find('[name="email"]').val();
-    var subject = $form.find('[name="subject"]').val() || 'Project inquiry';
-    var message = $form.find('[name="message"]').val();
-    var body = 'Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message;
-    var mailto = 'mailto:' + encodeURIComponent(recipient) + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-
-    $formStatus.removeClass('is-error').addClass('is-success').text('Opening your email app with the message prefilled.').show();
-    $directEmail.addClass('is-visible');
-    window.location.href = mailto;
-  });
+  var contactNext = document.getElementById('contact-next');
+  if (contactNext) {
+    contactNext.value = window.location.origin + window.location.pathname + '?contact=sent#contact-section';
+  }
 
 
 
